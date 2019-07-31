@@ -8,6 +8,11 @@ class App extends Component {
     articles: []
   }
 
+  saveStateToLocalStorage = () => {
+    // enregistrement du state dans le localStorage
+    localStorage.setItem('state', JSON.stringify(this.state));
+  };
+
   addArticle = article => {
     // récupération de l'état courant de notre state
     let oldArticle = this.state.articles;
@@ -16,7 +21,15 @@ class App extends Component {
     // variable où sera stocker tous le contenu de l'ancien state et le nouvel article à l'aide du spread operator
     let newArticle = [...oldArticle, article]
     // mise à jour du state
-    this.setState({ articles: newArticle });
+    this.setState({ articles: newArticle }, this.saveStateToLocalStorage);
+  };
+
+  componentDidMount(){
+    // récupération du state du localStorage
+    const state = localStorage.getItem('state');
+    if(state){
+      this.setState(JSON.parse(state));
+    }
   };
 
   render () {
@@ -24,7 +37,7 @@ class App extends Component {
       <div>
         <h1>Liste d'achat</h1>
         <Form addArticle={this.addArticle} />
-        <ItemList />
+        <ItemList articles={this.state.articles} />
       </div>
     )
   }
